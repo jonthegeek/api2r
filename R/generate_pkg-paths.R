@@ -1,6 +1,4 @@
 .generate_paths <- function(paths, api_abbr, security_data, base_url) {
-  # TODO: Do any APIDs lack tags?
-  # TODO: Do any APIDs have multiple tags?
   paths_by_tag <- as_bk_data(paths)
   paths_file_paths <- character()
   if (length(paths_by_tag)) {
@@ -32,6 +30,8 @@ S7::method(as_bk_data, class_paths) <- function(x) {
 .paths_to_tags_df <- function(x) {
   x <- unnest(x, "operations")
   x <- x[!x$deprecated, ]
+  x$tags[lengths(x$tags) == 0] <- "general"
+  x$tags <- purrr::map_chr(x$tags, 1)
   nest(
     x,
     .by = "tags", .key = "endpoints"
